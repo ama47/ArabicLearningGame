@@ -1,5 +1,6 @@
 import 'package:arabic_learning_game/worlds_menu_view.dart';
 import 'package:flutter/material.dart';
+import 'package:arabic_learning_game/settings_dialog.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -57,6 +58,14 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Color(0xFF40B4B7),
         textStyle: const TextStyle(fontSize: 40),
         fixedSize: Size(224, 77));
+    void _openSettingsDialog() {
+      Navigator.of(context).push(MaterialPageRoute<Null>(
+          builder: (BuildContext context) {
+            return SettingsDialog();
+          },
+          fullscreenDialog: true));
+    }
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -104,7 +113,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   flex: 5,
                   child: ElevatedButton(
                     style: buttonStyle,
-                    onPressed: () {},
+                    onPressed: () {
+                      _openSettingsDialog();
+                    },
                     child: const Text('خيارات'),
                   ),
                 ),

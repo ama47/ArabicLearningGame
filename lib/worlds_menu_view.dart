@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:arabic_learning_game/levels_menu_view.dart';
 
 // Worlds menu view
 class WorldsMenuView extends StatelessWidget {
@@ -29,7 +30,12 @@ class WorldsMenuView extends StatelessWidget {
                 flex: 10,
                 child: ElevatedButton(
                   style: buttonStyle,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LevelsMenuView()));
+                  },
                   child: const Text('العالم الأول'),
                 ),
               ),
