@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:arabic_learning_game/levels_menu_view.dart';
+import 'package:arabic_learning_game/views/levels_menu_view.dart';
 
 // Worlds menu view
 class WorldsMenuView extends StatelessWidget {

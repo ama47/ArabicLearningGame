@@ -1,6 +1,6 @@
-import 'package:arabic_learning_game/worlds_menu_view.dart';
+import 'package:arabic_learning_game/views/worlds_menu_view.dart';
 import 'package:flutter/material.dart';
-import 'package:arabic_learning_game/settings_dialog.dart';
+import 'package:arabic_learning_game/views/settings_dialog.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
