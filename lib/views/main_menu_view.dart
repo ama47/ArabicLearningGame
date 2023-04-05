@@ -1,6 +1,8 @@
 import 'package:arabic_learning_game/views/worlds_menu_view.dart';
 import 'package:flutter/material.dart';
 import 'package:arabic_learning_game/views/settings_dialog.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:arabic_learning_game/main.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -100,7 +102,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   flex: 10,
                   child: ElevatedButton(
                     style: buttonStyle,
-                    onPressed: () {
+                    onPressed: () async {
+                      await databaseService.getImageInfo(5);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
