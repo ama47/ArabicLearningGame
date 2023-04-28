@@ -1,11 +1,11 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:math';
 
 class DatabaseService {
   late Database captcha_db;
@@ -72,5 +72,13 @@ class DatabaseService {
     List<Map<String, dynamic>> content = await captcha_db.rawQuery(dbQuery);
     print(content);
     return content;
+  }
+
+  Future<Map<String, dynamic>> getRandomImage() async {
+    String dbQuery = 'select * from images';
+    List<Map<String, dynamic>> content = await captcha_db.rawQuery(dbQuery);
+    Map<String, dynamic> query = content[Random().nextInt(content.length - 1)];
+    print(query);
+    return query;
   }
 }
