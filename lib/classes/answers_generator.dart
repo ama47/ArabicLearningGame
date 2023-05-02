@@ -17,6 +17,7 @@ class CaptchaImage {
   static Future<void> setImageQuery() async {
     imageQuery = await databaseService.getRandomImage();
     print(imageQuery);
+    // add refreah method
   }
 
   static Future<String> getImageData() async {

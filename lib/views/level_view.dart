@@ -44,7 +44,7 @@ class _LevelViewState extends State<LevelView> {
         ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
-              Navigator.pop(context);
+              //Navigator.pop(context);
             },
             child: Text("إغلاق"))
       ];
@@ -66,13 +66,41 @@ class _LevelViewState extends State<LevelView> {
 
   Future<List<Answer>> setPossibleAnswers() async {
     String correctAnswer = await CaptchaImage.getNumberOfPoints();
+    // convert the correct answer to intger
+    int correctAnswerNum = int.parse(correctAnswer);
+    //here we check if the correct answer equal to one so we can avoid 0 or nigative numbers in the answers
+    int ans2 = 0, ans3 = 0, ans4 = 0;
     List<Answer> possibleAnswers = [];
     possibleAnswers.add(Answer(correctAnswer, true));
-    for (var i = 0; i < 3; i++) {
-      int wrongAnswer = Random().nextInt(10);
-      while (possibleAnswers.contains(wrongAnswer))
-        wrongAnswer = Random().nextInt(10);
-      possibleAnswers.add(Answer(wrongAnswer.toString(), false));
+    if (correctAnswerNum == 1 ||
+        correctAnswerNum ==
+            2) //then make random answers equal to near the correct answer
+    {
+      ans2 = correctAnswerNum + 1;
+      possibleAnswers.add(Answer(ans2.toString(), false));
+      ans3 = ans2 + 1;
+      possibleAnswers.add(Answer(ans3.toString(), false));
+
+      if (correctAnswerNum == 2) {
+        ans4 = correctAnswerNum - 1;
+        possibleAnswers.add(Answer(ans4.toString(), false));
+      } else {
+        ans4 = ans3 + 1;
+        possibleAnswers.add(Answer(ans4.toString(), false));
+      }
+    } else {
+      ans2 = correctAnswerNum + 1;
+      possibleAnswers.add(Answer(ans2.toString(), false));
+      ans3 = correctAnswerNum - 1;
+      possibleAnswers.add(Answer(ans3.toString(), false));
+
+      if (Random().nextInt(1) == 0) {
+        ans4 = ans2 + 1;
+        possibleAnswers.add(Answer(ans4.toString(), false));
+      } else {
+        ans4 = ans3 - 1;
+        possibleAnswers.add(Answer(ans4.toString(), false));
+      }
     }
     possibleAnswers.shuffle();
     return possibleAnswers;
