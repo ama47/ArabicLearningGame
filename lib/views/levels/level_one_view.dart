@@ -13,7 +13,14 @@ class LevelOneView extends StatefulWidget {
 }
 
 class _LevelOneViewState extends State<LevelOneView> {
-  int questionCount = 1;
+  int questionCount = 0;
+  List<CheckIcon> checkIcons = [
+    CheckIcon(),
+    CheckIcon(),
+    CheckIcon(),
+    CheckIcon(),
+    CheckIcon(),
+  ];
 
   @override
   void initState() {
@@ -32,7 +39,7 @@ class _LevelOneViewState extends State<LevelOneView> {
   void showDialogs(bool? isCorrect) {
     List<Widget> actions;
     if (isCorrect == true) {
-      if (questionCount >= 5) {
+      if (questionCount >= 4) {
         actions = [
           Icon(
             Icons.emoji_emotions_outlined,
@@ -252,15 +259,8 @@ class _LevelOneViewState extends State<LevelOneView> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        CheckIcon(),
-                        CheckIcon(),
-                        CheckIcon(),
-                        CheckIcon(),
-                        CheckIcon(),
-                      ],
-                    ),
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: checkIcons),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -318,6 +318,10 @@ class CheckIcon extends StatefulWidget {
 
 class _CheckIconState extends State<CheckIcon> {
   bool isChecked = false;
+
+  void _toggle() {
+    isChecked = true;
+  }
 
   @override
   Widget build(BuildContext context) {
