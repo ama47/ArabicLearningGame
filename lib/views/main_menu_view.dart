@@ -1,4 +1,4 @@
-import 'package:arabic_learning_game/views/worlds_menu_view.dart';
+import 'package:arabic_learning_game/views/worlds_view.dart';
 import 'package:flutter/material.dart';
 import 'package:arabic_learning_game/views/settings_dialog.dart';
 import 'package:sqflite/sqflite.dart';
@@ -107,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const WorldsMenuView()));
+                              builder: (context) => const WorldsView()));
                     },
                     child: const Text('ابدأ'),
                   ),
