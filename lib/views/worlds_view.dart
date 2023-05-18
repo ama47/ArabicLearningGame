@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:arabic_learning_game/views/levels/level_one_view.dart';
+import 'package:arabic_learning_game/views/level_view.dart';
+
+int worldUnlocked = 1, levelUnlocked = 1;
 
 // Worlds menu view
 class WorldsView extends StatefulWidget {
@@ -10,8 +12,6 @@ class WorldsView extends StatefulWidget {
 }
 
 class _WorldsViewState extends State<WorldsView> {
-  int _worldCount = 1, _levelCount = 1;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,10 +65,8 @@ class _LevelButtonState extends State<LevelButton> {
     return ElevatedButton(
       onPressed: _isEnabled
           ? () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const LevelOneView()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const LevelView()));
             }
           : null,
       style: ElevatedButton.styleFrom(
@@ -80,9 +78,9 @@ class _LevelButtonState extends State<LevelButton> {
 }
 
 class WorldContainer extends StatefulWidget {
-  final int worldNum;
+  final int worldUnlocked;
   final String text;
-  const WorldContainer({Key? key, this.worldNum = 0, this.text = 'null'})
+  const WorldContainer({Key? key, this.worldUnlocked = 0, this.text = 'null'})
       : super(key: key);
 
   @override
@@ -93,13 +91,19 @@ class _WorldContainerState extends State<WorldContainer> {
   bool _isEnabled = false;
   TextStyle _textStyle = TextStyle(fontSize: 30);
   ButtonStyle _buttonStyle = ElevatedButton.styleFrom(
-      backgroundColor: Colors.blueAccent,
+      backgroundColor: Colors.redAccent,
       textStyle: const TextStyle(color: Colors.black, fontSize: 40),
       fixedSize: Size(224, 77));
   BoxDecoration _containerDecoration = BoxDecoration(
-    border: Border.all(color: Colors.blueAccent, width: 2.0),
+    border: Border.all(color: Colors.redAccent, width: 2.0),
     borderRadius: BorderRadius.circular(10.0),
   );
+
+  void _unlock() {
+    if (levelUnlocked == 3) {
+      worldUnlocked++;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

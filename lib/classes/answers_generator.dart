@@ -4,15 +4,18 @@ class CaptchaImage {
   // attributes of Image table
   static int? _imageId;
   static String? _image;
-  static String _correctAnswer = '';
   static int? _numberOfPoints;
   static int? _numberOfMdLetters;
   static String? _isConected;
+  static String? _word;
   static Map<String, dynamic>? imageQuery;
 
   CaptchaImage() {
     setImageQuery();
+    setWord();
     setNumberOfPoints();
+    setNumberOfMdLetters();
+    setIsConnected();
   }
   static Future<void> setImageQuery() async {
     imageQuery = await databaseService.getRandomImage();
@@ -36,10 +39,24 @@ class CaptchaImage {
   static Future<String> getNumberOfPoints() async {
     return '$_numberOfPoints';
   }
-}
 
-class Questions {
-  static final String Question1 = 'كم عدد النقاط في الصورة؟';
+  static Future<String> getWord() async => '$_word';
+
+  static Future<void> setWord() async {
+    _word = imageQuery!['word'];
+  }
+
+  static Future<String> getNumberOfMdLetters() async => '$_numberOfMdLetters';
+
+  static Future<void> setNumberOfMdLetters() async {
+    _numberOfMdLetters = imageQuery!['number_of_md_letters'];
+  }
+
+  static Future<String> getIsConnected() async => '$_isConected';
+
+  static Future<void> setIsConnected() async {
+    _isConected = imageQuery!['is_connected'];
+  }
 }
 
 class Answer {
