@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:arabic_learning_game/views/level_view.dart';
 
-int worldUnlocked = 1, levelUnlocked = 1;
-
 // Worlds menu view
 class WorldsView extends StatefulWidget {
   const WorldsView({super.key});
@@ -98,12 +96,6 @@ class _WorldContainerState extends State<WorldContainer> {
     border: Border.all(color: Colors.redAccent, width: 2.0),
     borderRadius: BorderRadius.circular(10.0),
   );
-
-  void _unlock() {
-    if (levelUnlocked == 3) {
-      worldUnlocked++;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
