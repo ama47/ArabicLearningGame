@@ -70,15 +70,32 @@ class DatabaseService {
   Future<List<Map<String, dynamic>>> getImageInfo(int id) async {
     String dbQuery = 'select * from images where image_id = $id';
     List<Map<String, dynamic>> content = await captcha_db.rawQuery(dbQuery);
-    print(content);
     return content;
   }
 
   Future<Map<String, dynamic>> getRandomImage() async {
-    String dbQuery = 'select * from images';
-    List<Map<String, dynamic>> content = await captcha_db.rawQuery(dbQuery);
-    Map<String, dynamic> query = content[Random().nextInt(content.length - 1)];
-    print(query);
-    return query;
+    String selectedImagesQuery = 'select * from selectedImages';
+    List<Map<String, dynamic>> selectedImagesContent =
+        await captcha_db.rawQuery(selectedImagesQuery);
+    print(selectedImagesContent);
+    String imagesQuery = selectedImagesContent.isNotEmpty
+        ? 'select * from images where image_id != (select * from selectedImages)'
+        : 'select * from images';
+    print(imagesQuery);
+    List<Map<String, dynamic>> imagesContent =
+        await captcha_db.rawQuery(imagesQuery);
+    Map<String, dynamic> imageContent =
+        imagesContent[Random().nextInt(imagesContent.length - 1)];
+    imagesQuery =
+        'insert into selectedImages values(${imageContent['image_id']})';
+    int flag = await captcha_db.rawInsert(imagesQuery);
+    print(imageContent);
+    print(selectedImagesContent);
+    return imageContent;
+  }
+
+  Future<void> deleteSelectedImages() async {
+    String dbQuery = 'delete from selectedImages';
+    int content = await captcha_db.rawDelete(dbQuery);
   }
 }

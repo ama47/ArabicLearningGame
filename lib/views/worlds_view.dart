@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:arabic_learning_game/views/level_view.dart';
 
@@ -28,12 +29,15 @@ class _WorldsViewState extends State<WorldsView> {
             children: <Widget>[
               WorldContainer(
                 text: 'العالم الأول',
+                worldNum: 1,
               ),
               WorldContainer(
                 text: 'العالم الثاني',
+                worldNum: 2,
               ),
               WorldContainer(
                 text: 'العالم الثالث',
+                worldNum: 3,
               ),
             ],
           )),
@@ -41,44 +45,10 @@ class _WorldsViewState extends State<WorldsView> {
   }
 }
 
-class LevelButton extends StatefulWidget {
-  final int levelNum;
-  const LevelButton({Key? key, this.levelNum = 0}) : super(key: key);
-
-  @override
-  _LevelButtonState createState() => _LevelButtonState();
-}
-
-class _LevelButtonState extends State<LevelButton> {
-  bool _isEnabled = true;
-
-  void _toggleButton() {
-    setState(() {
-      _isEnabled = !_isEnabled;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: _isEnabled
-          ? () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const LevelView()));
-            }
-          : null,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: _isEnabled ? Colors.green : Colors.grey,
-      ),
-      child: Text('${widget.levelNum}'),
-    );
-  }
-}
-
 class WorldContainer extends StatefulWidget {
-  final int worldUnlocked;
+  final int worldNum;
   final String text;
-  const WorldContainer({Key? key, this.worldUnlocked = 0, this.text = 'null'})
+  const WorldContainer({Key? key, this.worldNum = 0, this.text = 'null'})
       : super(key: key);
 
   @override
@@ -88,10 +58,6 @@ class WorldContainer extends StatefulWidget {
 class _WorldContainerState extends State<WorldContainer> {
   bool _isEnabled = false;
   TextStyle _textStyle = TextStyle(fontSize: 30);
-  ButtonStyle _buttonStyle = ElevatedButton.styleFrom(
-      backgroundColor: Colors.redAccent,
-      textStyle: const TextStyle(color: Colors.black, fontSize: 40),
-      fixedSize: Size(224, 77));
   BoxDecoration _containerDecoration = BoxDecoration(
     border: Border.all(color: Colors.redAccent, width: 2.0),
     borderRadius: BorderRadius.circular(10.0),
@@ -112,13 +78,16 @@ class _WorldContainerState extends State<WorldContainer> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 LevelButton(
-                  levelNum: 1,
+                  levelNum: 10,
+                  worldNum: widget.worldNum,
                 ),
                 LevelButton(
-                  levelNum: 2,
+                  levelNum: 20,
+                  worldNum: widget.worldNum,
                 ),
                 LevelButton(
-                  levelNum: 3,
+                  levelNum: 30,
+                  worldNum: widget.worldNum,
                 )
               ],
             ),
@@ -126,5 +95,76 @@ class _WorldContainerState extends State<WorldContainer> {
         ],
       ),
     );
+  }
+}
+
+class LevelButton extends StatefulWidget {
+  final int levelNum;
+  final int worldNum;
+  const LevelButton({Key? key, this.levelNum = 0, this.worldNum = 0})
+      : super(key: key);
+
+  @override
+  _LevelButtonState createState() => _LevelButtonState();
+}
+
+class _LevelButtonState extends State<LevelButton> {
+  int _buttonState = 0;
+  bool _isActive = false;
+  int worldCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWorldCount();
+  }
+
+  void _loadWorldCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    worldCount = (prefs.getInt('worldCount') ?? 0);
+    if (worldCount % 100 == widget.levelNum &&
+        worldCount ~/ 100 == widget.worldNum) {
+      _buttonState = 1;
+      _isActive = true;
+    } else if (worldCount ~/ 100 > widget.worldNum) {
+      _isActive = true;
+      _buttonState = 2;
+    } else if (worldCount % 100 > widget.levelNum &&
+        worldCount ~/ 100 >= widget.worldNum) {
+      _isActive = true;
+      _buttonState = 2;
+    }
+    setState(() {});
+  }
+
+  MaterialColor getColors() {
+    switch (_buttonState) {
+      case 1:
+        return Colors.green;
+      case 2:
+        return Colors.yellow;
+    }
+    return Colors.grey;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        onPressed: _isActive
+            ? () {
+                if (_buttonState == 1) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LevelView(),
+                    ),
+                  );
+                }
+              }
+            : null,
+        style: ElevatedButton.styleFrom(backgroundColor: getColors()),
+        child: _buttonState == 2
+            ? Icon(Icons.done)
+            : Text('${widget.levelNum ~/ 10}'));
   }
 }
