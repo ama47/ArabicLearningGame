@@ -1,7 +1,9 @@
+import 'package:arabic_learning_game/views/worlds_view.dart';
 import 'package:flutter/material.dart';
 import 'package:arabic_learning_game/classes/answers_generator.dart';
 import 'dart:math';
 import 'package:flutter/scheduler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Level Menu
 class LevelView extends StatefulWidget {
@@ -14,9 +16,11 @@ class LevelView extends StatefulWidget {
 class _LevelViewState extends State<LevelView> {
   int questionCount = 0;
   List<CheckIcon> checkIcons = [];
-  int leveltype = 3;
-  bool isMcq = true;
+  int leveltype = 8;
+  bool isMcq = false;
   String? randChar;
+  int worldCount = 0;
+  int numberOffails = 0;
   final String question1 = 'كم عدد النقاط في الصورة؟';
   final String question2 = 'هل توجد اي نقطة بالصورة؟'; //
   final String question3 = 'كم عدد الاحرف بالصورة؟';
@@ -25,11 +29,13 @@ class _LevelViewState extends State<LevelView> {
   String question5 = '';
   String question6 = 'هل يوجد حرف (يتم اختيار حرف عشوائي)؟'; //
   final String question7 = 'كم عدد حروف المد؟';
-  final String question8 = ' هل يوجد حروف مد؟'; //
+  final String question8 = ' هل يوجد حرف مد؟'; //
   final String question9 = 'هل الأحرف متصلة أو منفصلة؟'; //
   @override
   void initState() {
     super.initState();
+    _loadWorldCount();
+    print(worldCount);
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       await _loadData();
       setState(() {});
@@ -41,6 +47,26 @@ class _LevelViewState extends State<LevelView> {
     Future<List<Answer>> answers = isMcq
         ? setPossibleMultipleChoicesAnswers()
         : setPossibleTrueFalseAnswers();
+  }
+
+  void _loadWorldCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      worldCount = (prefs.getInt('worldCount') ?? 0);
+    });
+  }
+
+  void _incrementLevel() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      worldCount = (prefs.getInt('worldCount') ?? 0) + 10;
+
+      if (worldCount % 100 == 40) {
+        worldCount += 70;
+      }
+      print(worldCount);
+      prefs.setInt('worldCount', worldCount);
+    });
   }
 
   void showDialogs(bool? isCorrect) {
@@ -59,8 +85,14 @@ class _LevelViewState extends State<LevelView> {
           ),
           ElevatedButton(
               onPressed: () {
+                _incrementLevel();
                 Navigator.of(context).pop();
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WorldsView(),
+                  ),
+                );
               },
               child: Text("إغلاق"))
         ];
@@ -78,9 +110,7 @@ class _LevelViewState extends State<LevelView> {
           ElevatedButton(
               onPressed: () {
                 questionCount++;
-
                 checkIcons.add(CheckIcon());
-
                 print(questionCount);
                 setState(() {});
                 Navigator.of(context).pop();
@@ -102,7 +132,7 @@ class _LevelViewState extends State<LevelView> {
         ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
-              //Navigator.pop(context);
+              numberOffails++;
             },
             child: Text("إغلاق"))
       ];
