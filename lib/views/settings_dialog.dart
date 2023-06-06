@@ -11,6 +11,7 @@ class SettingsDialogState extends State<SettingsDialog> {
   void resetGame() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('worldCount', 110);
+    prefs.setInt('cyberCount', -1);
   }
 
   @override

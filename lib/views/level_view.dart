@@ -4,6 +4,7 @@ import 'package:arabic_learning_game/classes/answers_generator.dart';
 import 'dart:math';
 import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:arabic_learning_game/classes/constants.dart' as Constants;
 
 // Level Menu
 class LevelView extends StatefulWidget {
@@ -19,8 +20,7 @@ class _LevelViewState extends State<LevelView> {
   int leveltype = 8;
   bool isMcq = false;
   String? randChar;
-  int worldCount = 0;
-  int numberOffails = 0;
+  int worldCount = 0, numberOffails = 0, cyberCount = 0;
   final String question1 = 'كم عدد النقاط في الصورة؟';
   final String question2 = 'هل توجد اي نقطة بالصورة؟'; //
   final String question3 = 'كم عدد الاحرف بالصورة؟';
@@ -31,10 +31,23 @@ class _LevelViewState extends State<LevelView> {
   final String question7 = 'كم عدد حروف المد؟';
   final String question8 = ' هل يوجد حرف مد؟'; //
   final String question9 = 'هل الأحرف متصلة أو منفصلة؟'; //
+  final List<String> cyberAdvice = [
+    'لا تنشر صورك عبر برامج التواصل الإجتماعي',
+    'لا ترسل بيانات البطاقة البنكية لأي شخص',
+    'لا تزود أي شخص معلوماتك الخاصة أو عناوين اتصال',
+    'لا تفتح أي مرفق في البريد الإلكتروني إلا إذا كان المرسل معروف لديك',
+    'لا تستجيب لأي رسالة أو طلب إذا لم تفهم معناها وأخبر والديك عنها مباشرة',
+    'اختر كلمات مرور قوية ولاتشاركها مع أحد مطلقاً',
+    'في حال تعرضك للتنمر أخبر والديك فوراً',
+    'لا تنشر الشائعات قد تؤذي غيرك',
+    'لا تفتح الروابط غير المعروفة إلا بعد أن تتأكد من صحتها',
+    'حدِّث برامج تصفح الإنترنت واطلب المساعدة من والديك لتحديثها'
+  ];
   @override
   void initState() {
     super.initState();
     _loadWorldCount();
+    _loadCyberCount();
     print(worldCount);
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       await _loadData();
@@ -52,7 +65,14 @@ class _LevelViewState extends State<LevelView> {
   void _loadWorldCount() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      worldCount = (prefs.getInt('worldCount') ?? 0);
+      worldCount = (prefs.getInt('worldCount') ?? 110);
+    });
+  }
+
+  void _loadCyberCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      cyberCount = (prefs.getInt('cyberCount') ?? 0);
     });
   }
 
@@ -64,8 +84,15 @@ class _LevelViewState extends State<LevelView> {
       if (worldCount % 100 == 40) {
         worldCount += 70;
       }
-      print(worldCount);
       prefs.setInt('worldCount', worldCount);
+    });
+  }
+
+  void _incrementCyberCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      cyberCount = (prefs.getInt('cyberCount') ?? 0) + 1;
+      prefs.setInt('cyberCount', cyberCount);
     });
   }
 
@@ -86,6 +113,7 @@ class _LevelViewState extends State<LevelView> {
           ElevatedButton(
               onPressed: () {
                 _incrementLevel();
+                _incrementCyberCount();
                 Navigator.of(context).pop();
                 Navigator.pushReplacement(
                   context,
@@ -93,6 +121,7 @@ class _LevelViewState extends State<LevelView> {
                     builder: (context) => WorldsView(),
                   ),
                 );
+                showCyberAdvice();
               },
               child: Text("إغلاق"))
         ];
@@ -101,11 +130,11 @@ class _LevelViewState extends State<LevelView> {
           Icon(
             Icons.check,
             color: Colors.green,
-            size: 100,
+            size: 175,
           ),
           Text(
-            "أحسنت!",
-            style: TextStyle(fontSize: 20),
+            "! أحسنت",
+            style: TextStyle(fontSize: 30),
           ),
           ElevatedButton(
               onPressed: () {
@@ -146,6 +175,31 @@ class _LevelViewState extends State<LevelView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: actions,
+              ),
+            ),
+          );
+        });
+  }
+
+  void showCyberAdvice() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            child: Container(
+              height: 300,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'نصيحة',
+                    style: TextStyle(fontSize: 30),
+                  ),
+                  Text(
+                    cyberAdvice[cyberCount],
+                    style: TextStyle(fontSize: 20),
+                  )
+                ],
               ),
             ),
           );
@@ -224,14 +278,20 @@ class _LevelViewState extends State<LevelView> {
                       children: [
                         Flexible(
                             child: ElevatedButton(
-                          child: Text('${snapshot.data![0].answer}'),
+                          child: Text(
+                            '${snapshot.data![0].answer}',
+                            style: TextStyle(color: Constants.TEXT_COLOR),
+                          ),
                           onPressed: () {
                             showDialogs(snapshot.data![0].isCorrect);
                           },
                         )),
                         Flexible(
                             child: ElevatedButton(
-                          child: Text('${snapshot.data![1].answer}'),
+                          child: Text(
+                            '${snapshot.data![1].answer}',
+                            style: TextStyle(color: Constants.TEXT_COLOR),
+                          ),
                           onPressed: () {
                             showDialogs(snapshot.data![1].isCorrect);
                           },
@@ -415,11 +475,10 @@ class _LevelViewState extends State<LevelView> {
     randChar = getRandomCharacter();
     String question5 = 'ما ترتيب الحرف $randChar ؟';
     return Scaffold(
-        backgroundColor: Color(0xFFD4ECEC),
         appBar: AppBar(
           title: Text(
-            ('مرحلة 1 - سؤال $questionCount'),
-            style: TextStyle(fontSize: 30),
+            ('مرحلة 1 - سؤال ${questionCount + 1}'),
+            style: TextStyle(fontSize: 30, color: Constants.TEXT_COLOR),
           ),
           centerTitle: true,
         ),

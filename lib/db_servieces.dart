@@ -74,23 +74,11 @@ class DatabaseService {
   }
 
   Future<Map<String, dynamic>> getRandomImage() async {
-    String selectedImagesQuery = 'select * from selectedImages';
-    List<Map<String, dynamic>> selectedImagesContent =
-        await captcha_db.rawQuery(selectedImagesQuery);
-    print(selectedImagesContent);
-    String imagesQuery = selectedImagesContent.isNotEmpty
-        ? 'select * from images where image_id != (select * from selectedImages)'
-        : 'select * from images';
-    print(imagesQuery);
+    String imagesQuery = 'select * from images';
     List<Map<String, dynamic>> imagesContent =
         await captcha_db.rawQuery(imagesQuery);
     Map<String, dynamic> imageContent =
         imagesContent[Random().nextInt(imagesContent.length - 1)];
-    imagesQuery =
-        'insert into selectedImages values(${imageContent['image_id']})';
-    int flag = await captcha_db.rawInsert(imagesQuery);
-    print(imageContent);
-    print(selectedImagesContent);
     return imageContent;
   }
 

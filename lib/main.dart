@@ -18,4 +18,7 @@ void setInitialWorldValue() async {
   if (!prefs.containsKey('worldCount')) {
     await prefs.setInt('worldCount', 110);
   }
+  if (!prefs.containsKey('cyberCount')) {
+    await prefs.setInt('cyberCount', -1);
+  }
 }

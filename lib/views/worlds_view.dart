@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:arabic_learning_game/views/level_view.dart';
+import 'package:arabic_learning_game/classes/constants.dart' as Constants;
 
 // Worlds menu view
 class WorldsView extends StatefulWidget {
@@ -14,11 +15,13 @@ class _WorldsViewState extends State<WorldsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xFFD4ECEC),
         appBar: AppBar(
           title: Text(
             'قائمة العوالم',
-            style: TextStyle(fontSize: 30),
+            style: TextStyle(
+                color: Constants.TEXT_COLOR,
+                fontFamily: 'Notokufi',
+                fontSize: 30),
           ),
           centerTitle: true,
         ),
@@ -57,9 +60,10 @@ class WorldContainer extends StatefulWidget {
 
 class _WorldContainerState extends State<WorldContainer> {
   bool _isEnabled = false;
-  TextStyle _textStyle = TextStyle(fontSize: 30);
+  TextStyle _textStyle = TextStyle(
+      fontSize: 27, color: Constants.TEXT_COLOR, fontFamily: 'Notokufi');
   BoxDecoration _containerDecoration = BoxDecoration(
-    border: Border.all(color: Colors.redAccent, width: 2.0),
+    color: Constants.THIRD_COLOR,
     borderRadius: BorderRadius.circular(10.0),
   );
 
@@ -137,12 +141,12 @@ class _LevelButtonState extends State<LevelButton> {
     setState(() {});
   }
 
-  MaterialColor getColors() {
+  dynamic getColors() {
     switch (_buttonState) {
       case 1:
-        return Colors.green;
+        return Constants.SECOND_COLOR;
       case 2:
-        return Colors.yellow;
+        return Colors.yellow.shade300;
     }
     return Colors.grey;
   }
@@ -162,9 +166,17 @@ class _LevelButtonState extends State<LevelButton> {
                 }
               }
             : null,
-        style: ElevatedButton.styleFrom(backgroundColor: getColors()),
+        style: ElevatedButton.styleFrom(
+            backgroundColor: getColors(), fixedSize: Size(40, 40)),
         child: _buttonState == 2
-            ? Icon(Icons.done)
-            : Text('${widget.levelNum ~/ 10}'));
+            ? Icon(
+                Icons.done,
+                color: Constants.TEXT_COLOR,
+              )
+            : Text(
+                '${widget.levelNum ~/ 10}',
+                style: TextStyle(
+                    color: Constants.TEXT_COLOR, fontFamily: 'Notokufi'),
+              ));
   }
 }
